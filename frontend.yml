@@ -32,22 +32,26 @@
 #    systemctl enable nginx &>>$log_file
 #    systemctl restart nginx &>>$log_file
 #    status_check $?
-
 - name: frontend playbook
   hosts: all
+  become: yes
   tasks:
    - name: Disable Default Nginx
      ansible.builtin.dnf: dnf module disable nginx -y
+
    - name: Enabel Nginx 24 Version
      ansible.builtin.dnf: dnf module enable nginx:1.24 -y
+
    - name: Install nginx
      ansible.builtin.dnf:
        name: nginx
        state: present
+
    - name: copy nginx conf file
      ansible.builtin.copy:
        src: nginx.conf
        dest: /etc/nginx/nginx.conf
+
    - name: start nginx
      ansible.builtin.systemd_service:
        name: nginx
